@@ -16,8 +16,5 @@ default = []
 
 [dependencies]
 cgmath = "0.18"
-three-d-asset = "0.4"
+three-d-asset = { git = "https://github.com/leapodonte/three-d-asset.git", branch = "dev", features = ["obj"] }
 thiserror = "1.0"
-
-[dev-dependencies]
-three-d-asset = {version="0.4", features = ["obj"] }
