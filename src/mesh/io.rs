@@ -133,6 +133,52 @@ impl Mesh {
             ..Default::default()
         }
     }
+
+    ///
+    /// Exports the [Mesh] into a [three_d_asset::TriMesh] that contain the raw buffer data.
+    /// The [three_d_asset::TriMesh] can then for example be visualized or saved to disk (using the [three_d_asset::io] module).
+    ///
+    pub fn export_without_normals(&self) -> three_d_asset::TriMesh {
+        use three_d_asset::{Indices, Positions, TriMesh};
+
+        let vertex_index_map: HashMap<_, _> = self
+            .vertex_iter()
+            .enumerate()
+            .map(|(index, vertex_id)| (vertex_id, index as u32))
+            .collect();
+
+        let indices: Vec<u32> = self
+            .face_iter()
+            .flat_map(|face_id| {
+                self.face_halfedge_iter(face_id).map(|halfedge_id| {
+                    let vertex_id = self
+                        .walker_from_halfedge(halfedge_id)
+                        .vertex_id()
+                        .expect("VertexID should exist");
+                    *vertex_index_map
+                        .get(&vertex_id)
+                        .expect("Index should be present")
+                })
+            })
+            .collect();
+
+        let positions = Positions::F64(
+            self.vertex_iter()
+                .map(|vertex_id| self.vertex_position(vertex_id))
+                .collect(),
+        );
+        /*let normals = Some(
+            self.vertex_iter()
+                .map(|vertex_id| self.vertex_normal(vertex_id).cast::<f32>().expect("Should cast to f32"))
+                .collect(),
+        );*/
+
+        TriMesh {
+            indices: Indices::U32(indices),
+            positions,
+            ..Default::default()
+        }
+    }
 }
 
 impl From<three_d_asset::TriMesh> for Mesh {
