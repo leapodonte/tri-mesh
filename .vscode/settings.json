@@ -1,0 +1,7 @@
+{
+    "editor.formatOnSave": true,
+    "files.encoding": "utf8",
+    "rust-analyzer.check.command": "clippy",
+    "rust-analyzer.showUnlinkedFileNotification": false,
+    "debug.allowBreakpointsEverywhere": true
+}
